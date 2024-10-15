@@ -158,6 +158,7 @@ const TabScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.StartCon}>Start the conversation below</Text>
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
@@ -184,6 +185,12 @@ export default TabScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  StartCon: {
+    fontSize: 10,
+    textAlign: "center",
+    padding: 15,
+    color: "gray",
   },
   msgsend: {
     flexDirection: "row",
