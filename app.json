@@ -4,7 +4,7 @@
     "slug": "Chat-Vat",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "",
+      "icon": "./assets/log2.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.akm_1610.ChatVat"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "38eeba81-5d0c-42c1-ad6a-59a1a0c18211"
+      }
     }
   }
 }

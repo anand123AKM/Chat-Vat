@@ -15,11 +15,14 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { TouchableOpacity } from "react-native";
-import uuid from "react-native-uuid"; // Import react-native-uuid
+import uuid from "react-native-uuid";
+import { useContext } from "react";
+import { DateContext } from "./TimeContext";
 
 const ChatVat = () => {
   const [userdata, setUserdata] = useState([]);
   const [lastMessages, setLastMessages] = useState({});
+  const { date } = useContext(DateContext);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -56,17 +59,14 @@ const ChatVat = () => {
 
   const HandleChat = async (user) => {
     try {
-      // Create a composite key for the chat document ID
       const currentUserId = auth.currentUser.uid;
       const selectedUserId = user.uid;
       const chatId = [currentUserId, selectedUserId].sort().join("_");
 
-      // Check if a chat already exists between the current user and the selected user
       const chatDocRef = doc(db, "chats", chatId);
       const chatDocSnapshot = await getDoc(chatDocRef);
 
       if (!chatDocSnapshot.exists()) {
-        // Create a new document in the chats collection with the composite key
         await setDoc(chatDocRef, {
           chatId: chatId,
           participants: [currentUserId, selectedUserId],
@@ -74,7 +74,6 @@ const ChatVat = () => {
         });
       }
 
-      // Navigate to the /tab route with the chatId as a parameter
       router.push({
         pathname: "/tab",
         params: { userName: user.name, userImage: user.image, chatId: chatId },
@@ -103,17 +102,20 @@ const ChatVat = () => {
                     fontSize: 22,
                     color: "#03346E",
                     fontWeight: "bold",
-                    paddingTop: 3,
-                    paddingLeft: 12,
+                    paddingTop: 2,
+                    paddingLeft: 11,
                     width: 40,
                     height: 40,
                     marginRight: 10,
+                    marginTop: 3,
                     borderRadius: 50,
-                    borderWidth: 1,
-                    borderColor: "#03346E",
+                    borderWidth: 2,
+                    borderColor: "white",
+                    backgroundColor: "#03346E",
+                    color: "white",
                   }}
                 >
-                  {user.name.charAt(0)}
+                  {user.name.charAt(0).toUpperCase()}
                 </Text>
               ) : (
                 <Image
@@ -121,7 +123,9 @@ const ChatVat = () => {
                   style={{
                     width: 40,
                     height: 40,
-                    marginRight: 10,
+                    marginTop: 3,
+                    marginLeft: 4,
+                    marginRight: 12,
                     borderRadius: 50,
                     borderWidth: 1,
                     borderColor: "#03346E",
@@ -131,20 +135,28 @@ const ChatVat = () => {
               <View style={styles.MsgContainer}>
                 <View style={styles.textContainer}>
                   <Text key={user.uid} style={styles.userName}>
-                    {user.name}{" "}
+                    {user.name}
                     {auth.currentUser.uid === user.uid ? "(You)" : ""}
                   </Text>
                   <Text style={styles.time}>
-                    {lastMessages[user.uid]
-                      ? formatDate(lastMessages[user.uid].createdAt)
-                      : "Time"}
-                  </Text>
-                </View>
-                <View>
-                  <Text style={styles.time}>
-                    {lastMessages[user.uid]
-                      ? lastMessages[user.uid].text
-                      : "No messages yet"}
+                    {" "}
+                    {(() => {
+                      try {
+                        const { seconds, nanoseconds } = user.createdAt;
+                        const milliseconds =
+                          seconds * 1000 + nanoseconds / 1000000;
+                        const createdAt1 = new Date(milliseconds);
+
+                        if (isNaN(createdAt1.getTime())) {
+                          throw new RangeError("Invalid date value");
+                        }
+
+                        return createdAt1.toISOString().slice(11, 16);
+                      } catch (error) {
+                        console.error("Error formatting date: ", error);
+                        return "Invalid date";
+                      }
+                    })()}
                   </Text>
                 </View>
               </View>
@@ -173,7 +185,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#6EACDA",
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 35,
     margin: 7,
   },
   MsgContainer: {},
@@ -182,15 +194,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: 300,
+    marginTop: 8,
+    paddingLeft: 4,
   },
   userName: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#03346E",
     fontWeight: "bold",
   },
   time: {
     fontSize: 12,
     color: "#03346E",
-    paddingTop: 6,
+    paddingTop: 4,
+    marginRight: 10,
   },
 });

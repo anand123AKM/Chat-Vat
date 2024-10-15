@@ -140,7 +140,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require("../assets/log2.png")} />
+      <Image style={styles.image} source={require("../assets/log2.jpg")} />
       {!loading && (
         <>
           <View style={styles.inputView}>
