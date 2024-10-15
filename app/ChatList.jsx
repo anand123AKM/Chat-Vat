@@ -136,7 +136,7 @@ const ChatVat = () => {
                 <View style={styles.textContainer}>
                   <Text key={user.uid} style={styles.userName}>
                     {user.name}
-                    {auth.currentUser.uid === user.uid ? "(You)" : ""}
+                    {auth.currentUser.uid === user.uid ? " (You)" : ""}
                   </Text>
                   <Text style={styles.time}>
                     {" "}
